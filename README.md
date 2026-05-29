@@ -3,7 +3,7 @@
 [![Java Version](https://img.shields.io/badge/Java-21%2B-orange.svg?style=for-the-badge&logo=openjdk)](https://adoptium.net/)
 [![JavaFX](https://img.shields.io/badge/JavaFX-21-blue.svg?style=for-the-badge&logo=oracle)](https://openjfx.io/)
 [![Build](https://img.shields.io/badge/Maven-3.8%2B-red.svg?style=for-the-badge&logo=apache-maven)](https://maven.apache.org/)
-[![License](https://img.shields.io/badge/License-Custom--Non--Commercial-red.svg?style=for-the-badge)](file:///c:/Users/alors/Downloads/rcp-java/LICENSE)
+[![License](https://img.shields.io/badge/License-Custom--Non--Commercial-red.svg?style=for-the-badge)](./LICENSE)
 
 Una plataforma de cliente rico (**Rich Client Platform - RCP**) premium para la administración empresarial (Dashboard, Clientes, Empleados, Pedidos, Auditoría de logs y Reportes). Diseñada siguiendo patrones arquitectónicos empresariales, concurrencia avanzada, modularidad dinámica y seguridad nativa a nivel del sistema operativo.
 
@@ -140,7 +140,7 @@ Para generar el empaquetado final (`.jar` unificado y ejecutable `.exe` nativo):
 # Empaquetar todo el proyecto
 mvn clean package -DskipTests
 ```
-- El ejecutable independiente con soporte de icono nativo y metadatos del sistema se creará en [target/RCPGestion.exe](file:///c:/Users/alors/Downloads/rcp-java/target/RCPGestion.exe).
+- El ejecutable independiente con soporte de icono nativo y metadatos del sistema se creará en [target/RCPGestion.exe](./target/RCPGestion.exe).
 
 ---
 
@@ -159,7 +159,7 @@ smtp.password=tu_contrase単a_de_aplicacion_google
 > **Modo Simulador de Consola**: Si no creas este archivo, la aplicación imprime directamente los códigos OTP por consola para facilitar el desarrollo local ágil.
 
 ### B. Aplicación Web (EmailJS y API REST)
-Para configurar el prototipo web, renombra el archivo [web-app/.env.example](file:///c:/Users/alors/Downloads/rcp-java/web-app/.env.example) a `web-app/.env` y configúralo:
+Para configurar el prototipo web, renombra el archivo [web-app/.env.example](./web-app/.env.example) a `web-app/.env` y configúralo:
 ```env
 # Conexión SMTP dinámica vía cliente EmailJS
 EMAILJS_PUBLIC_KEY=user_abcdefg1234567890
@@ -192,7 +192,7 @@ DATABASE_API_KEY=rcp_api_token_secure_123456789
 ## 📝 Licencia
 
 Este proyecto está bajo la **Licencia Personalizada de Alberto Ortiz**.
-Consulta el archivo [LICENSE](file:///c:/Users/alors/Downloads/rcp-java/LICENSE) para más detalles.
+Consulta el archivo [LICENSE](./LICENSE) para más detalles.
 
 **Resumen:**
 - ✅ Uso no comercial permitido
