@@ -9,10 +9,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.Region;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.ServiceLoader;
+import com.empresa.rcp.module.RCPModule;
 import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
 import javafx.util.Duration;
@@ -54,6 +57,8 @@ public class MainController implements Initializable {
     @FXML
     private Label lblUsuario;
     @FXML
+    private VBox sidebar;
+    @FXML
     private Button btnDashboard;
     @FXML
     private Button btnClientes;
@@ -81,6 +86,51 @@ public class MainController implements Initializable {
                     configurarInactividad(newScene);
                 }
             });
+        }
+
+        cargarModulosDinamicos();
+    }
+
+    private void cargarModulosDinamicos() {
+        if (sidebar == null) return;
+        try {
+            ServiceLoader<RCPModule> loader = ServiceLoader.load(RCPModule.class);
+            for (RCPModule modulo : loader) {
+                try {
+                    modulo.initializeModule();
+                    Button btn = new Button(modulo.getModuleName());
+                    btn.getStyleClass().add("sidebar-button");
+                    btn.setMaxWidth(Double.MAX_VALUE);
+                    VBox.setMargin(btn, new javafx.geometry.Insets(5, 0, 0, 0));
+                    
+                    if (modulo.getIconCode() != null && !modulo.getIconCode().isEmpty()) {
+                        try {
+                            org.kordamp.ikonli.javafx.FontIcon icon = new org.kordamp.ikonli.javafx.FontIcon(modulo.getIconCode());
+                            btn.setGraphic(icon);
+                        } catch (Exception ex) {
+                            // Fallback
+                        }
+                    }
+                    
+                    btn.setOnAction(e -> {
+                        Parent view = modulo.getView();
+                        if (view != null) {
+                            VBox.setVgrow(view, Priority.ALWAYS);
+                            contentArea.getChildren().setAll(view);
+                        }
+                    });
+                    
+                    int insertIndex = sidebar.getChildren().size();
+                    if (insertIndex > 0 && sidebar.getChildren().get(insertIndex - 1) instanceof Region) {
+                        insertIndex--;
+                    }
+                    sidebar.getChildren().add(insertIndex, btn);
+                } catch (Exception e) {
+                    System.err.println("Error cargando modulo dinamico: " + e.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error buscando modulos dinamicos: " + e.getMessage());
         }
     }
 
