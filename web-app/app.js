@@ -14,25 +14,43 @@ function initDB() {
             localStorage.setItem(key, JSON.stringify(mockData[key]));
         }
     }
+    if (!localStorage.getItem("sync_queue")) {
+        localStorage.setItem("sync_queue", JSON.stringify([]));
+    }
 }
 initDB();
+
+// Cola de sincronización fuera de línea
+const syncQueue = {
+    get: () => JSON.parse(localStorage.getItem("sync_queue")) || [],
+    save: (queue) => localStorage.setItem("sync_queue", JSON.stringify(queue)),
+    enqueue: (table, operation, data) => {
+        const queue = syncQueue.get();
+        const nextId = queue.length > 0 ? Math.max(...queue.map(q => q.id)) + 1 : 1;
+        queue.push({
+            id: nextId,
+            table: table,
+            operation: operation,
+            data: data,
+            timestamp: new Date().toISOString()
+        });
+        syncQueue.save(queue);
+        console.log(`[Sync] Cola encolada: ${operation} en ${table}`);
+        if (window.app) {
+            window.app.performSync();
+        }
+    }
+};
 
 // Helpers para consultar/guardar tablas
 const db = {
     get: (table) => JSON.parse(localStorage.getItem(table)) || [],
     save: (table, data) => {
         localStorage.setItem(table, JSON.stringify(data));
-        // Sincronizar en segundo plano con la base de datos externa si existe
+        // Sincronizar en segundo plano con la base de datos externa mediante la cola
         const apiUrl = window.app && window.app.env && window.app.env.DATABASE_API_URL;
         if (apiUrl) {
-            fetch(`${apiUrl}/${table}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${window.app.env.DATABASE_API_KEY || ''}`
-                },
-                body: JSON.stringify(data)
-            }).catch(e => console.error(`[Base de Datos] Error al sincronizar ${table}:`, e));
+            syncQueue.enqueue(table, 'SAVE', data);
         }
     },
     log: (usuario, accion) => {
@@ -49,6 +67,7 @@ class AppController {
         this.session = null;
         this.inactivityTimer = null;
         this.inactivityLimit = 5 * 60 * 1000; // 5 Minutos (300,000 ms)
+        this.isSyncing = false;
         
         // Historial de ventas de prueba para las gráficas
         this.ventasMensuales = {
@@ -57,6 +76,33 @@ class AppController {
 
         this.initEvents();
         this.loadEnv();
+        this.restoreTheme();
+
+        // Escuchar conectividad y disparar sincronización periódica
+        window.addEventListener('online', () => {
+            console.log("[Red] Conexión restablecida. Sincronizando cola pendiente...");
+            this.performSync();
+        });
+        setInterval(() => this.performSync(), 30000);
+    }
+
+    restoreTheme() {
+        const savedTheme = localStorage.getItem("theme") || "dark-mode";
+        document.body.classList.remove("dark-mode", "light-mode");
+        document.body.classList.add(savedTheme);
+        
+        // Actualizar icono/texto en la barra lateral
+        const icon = document.getElementById("theme-btn-icon");
+        const text = document.getElementById("theme-btn-text");
+        if (icon && text) {
+            if (savedTheme === "light-mode") {
+                icon.innerText = "dark_mode";
+                text.innerText = "Modo Oscuro";
+            } else {
+                icon.innerText = "light_mode";
+                text.innerText = "Modo Claro";
+            }
+        }
     }
 
     async loadEnv() {
@@ -116,6 +162,60 @@ class AppController {
             } catch(e) {
                 console.warn(`[Base de Datos] No se pudo sincronizar la tabla ${table} desde la nube:`, e);
             }
+        }
+    }
+
+    async performSync() {
+        if (this.isSyncing) return;
+        
+        const queue = syncQueue.get();
+        if (queue.length === 0) return;
+
+        const apiUrl = this.env && this.env.DATABASE_API_URL;
+        if (!apiUrl) return;
+
+        if (!navigator.onLine) {
+            console.log("[Sync] Modo Desconectado: Sincronización aplazada.");
+            return;
+        }
+
+        this.isSyncing = true;
+        console.log(`[Sync] Iniciando ciclo de sincronización de ${queue.length} tareas...`);
+        
+        let remainingQueue = [...queue];
+        let success = true;
+
+        for (const task of queue) {
+            try {
+                const res = await fetch(`${apiUrl}/${task.table}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.env.DATABASE_API_KEY || ''}`
+                    },
+                    body: JSON.stringify(task.data)
+                });
+                
+                if (res.ok) {
+                    console.log(`[Sync] Sincronización exitosa para tabla: ${task.table}`);
+                    remainingQueue = remainingQueue.filter(item => item.id !== task.id);
+                    syncQueue.save(remainingQueue);
+                } else {
+                    console.warn(`[Sync] Servidor rechazó sincronización de tabla: ${task.table}. Código: ${res.status}`);
+                    success = false;
+                    break;
+                }
+            } catch (err) {
+                console.error(`[Sync] Error de red al sincronizar tabla: ${task.table}`, err);
+                success = false;
+                break;
+            }
+        }
+
+        this.isSyncing = false;
+        if (success && remainingQueue.length > 0) {
+            // Continuar vaciando la cola
+            this.performSync();
         }
     }
 
@@ -394,8 +494,9 @@ class AppController {
             }
         }
 
-        // Cargar vista por defecto
-        this.navigateTo("dashboard");
+        // Cargar vista por defecto desde localStorage
+        const lastView = localStorage.getItem("lastActiveView") || "dashboard";
+        this.navigateTo(lastView);
         this.resetInactivityTimer();
     }
 
@@ -425,12 +526,14 @@ class AppController {
         if (body.classList.contains("dark-mode")) {
             body.classList.remove("dark-mode");
             body.classList.add("light-mode");
+            localStorage.setItem("theme", "light-mode");
             icon.innerText = "dark_mode";
             text.innerText = "Modo Oscuro";
             db.log(this.session?.username, "Cambió tema visual a Claro");
         } else {
             body.classList.remove("light-mode");
             body.classList.add("dark-mode");
+            localStorage.setItem("theme", "dark-mode");
             icon.innerText = "light_mode";
             text.innerText = "Modo Claro";
             db.log(this.session?.username, "Cambió tema visual a Oscuro");
@@ -443,6 +546,7 @@ class AppController {
 
     // --- NAVEGACIÓN ENTRE VISTAS (SPA) ---
     navigateTo(viewName) {
+        localStorage.setItem("lastActiveView", viewName);
         document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
         document.querySelectorAll('.menu-item').forEach(btn => btn.classList.remove('active'));
         
