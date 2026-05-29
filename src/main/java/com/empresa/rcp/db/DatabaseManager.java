@@ -77,6 +77,14 @@ public class DatabaseManager {
             stmt.execute("CREATE TABLE IF NOT EXISTS logs_actividad (" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "usuario TEXT, accion TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
+
+            stmt.execute("CREATE TABLE IF NOT EXISTS sync_queue (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "tabla TEXT, " +
+                    "operacion TEXT, " +
+                    "registro_id INTEGER, " +
+                    "datos TEXT, " +
+                    "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
         } catch (Exception e) {
             e.printStackTrace();
         }
