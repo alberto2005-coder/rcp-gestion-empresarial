@@ -9,10 +9,17 @@ module com.empresa.rcp {
     requires jbcrypt;
     requires com.github.librepdf.openpdf;
     requires jakarta.mail;
+    requires org.slf4j;
+    requires com.sun.jna;
+    requires com.sun.jna.platform;
+    requires org.kordamp.ikonli.javafx;
+
+    uses com.empresa.rcp.module.RCPModule;
 
     opens com.empresa.rcp to javafx.fxml;
 
     exports com.empresa.rcp;
+    exports com.empresa.rcp.util;
 
     opens com.empresa.rcp.module.auth to javafx.fxml;
     exports com.empresa.rcp.module.auth;
@@ -40,4 +47,5 @@ module com.empresa.rcp {
     opens com.empresa.rcp.module.reportes to javafx.fxml;
 
     exports com.empresa.rcp.module.reportes;
+    exports com.empresa.rcp.sync;
 }
