@@ -1,120 +1,188 @@
-# RCP Gestión Empresarial (Enterprise Architecture)
+# 🏢 RCP Gestión Empresarial — Enterprise Architecture
 
-**Rich Client Platform** (RCP) premium e integral para la administración empresarial: gestión de Empleados, Clientes, Pedidos, Auditoría y Reportes. Diseñada con patrones avanzados de arquitectura empresarial.
+[![Java Version](https://img.shields.io/badge/Java-21%2B-orange.svg?style=for-the-badge&logo=openjdk)](https://adoptium.net/)
+[![JavaFX](https://img.shields.io/badge/JavaFX-21-blue.svg?style=for-the-badge&logo=oracle)](https://openjfx.io/)
+[![Build](https://img.shields.io/badge/Maven-3.8%2B-red.svg?style=for-the-badge&logo=apache-maven)](https://maven.apache.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
----
-
-## 🎯 Características Enterprise
-
-### 1. Sistema de Plugins Dinámicos (Modularidad RCP)
-- **Carga Dinámica**: Soporte para la interfaz `RCPModule`. La aplicación escanea e inicializa de forma dinámica nuevos módulos/plugins de negocio utilizando `ServiceLoader` en tiempo de ejecución.
-- **Sidebar Dinámico**: Los módulos encontrados se acoplan automáticamente en el panel de navegación lateral.
-
-### 2. Gestión Asíncrona Resiliente (`DbTask`)
-- **UI Fluida**: Ejecución asíncrona mediante `DbTask` (extiende `javafx.concurrent.Task`) para realizar operaciones de bases de datos pesadas (reportes, KPIs) en segundo plano, evitando que la interfaz gráfica de usuario (JavaFX Application Thread) se congele.
-
-### 3. Cifrado Nativo de Credenciales (DPAPI Windows)
-- **Protección a Nivel SO**: Integración con la API DPAPI nativa de Windows (`CryptProtectData`/`CryptUnprotectData`) mediante JNA (Java Native Access).
-- **Autocifrado**: Al definir la contraseña SMTP de recuperación de contraseña en texto plano en `config.properties`, la aplicación la encripta en el primer inicio de forma segura bajo el prefijo `{DPAPI}` y la lee transparentemente en adelante, asegurando que las credenciales locales nunca se expongan en texto plano.
-
-### 4. Sincronización Fuera de Línea (Offline-First Engine)
-- **Cola de Sincronización Local**: Almacenamiento de transacciones modificadas localmente en la tabla SQLite `sync_queue` (Java) y en la cola `sync_queue` del `localStorage` (Web App).
-- **Ciclo de Envío**: `SyncManager` y `syncQueue` (JS) monitorean la conectividad a Internet. Al detectar conexión en línea, las transacciones pendientes se empujan en lote de forma secuencial hacia el servidor REST remoto.
-
-### 5. Persistencia del Espacio de Trabajo (Workspace State)
-- **Restauración de Ventana (Java)**: Guarda y restaura de forma automática el tamaño de la ventana principal, posición (X, Y) y si estaba o no maximizada.
-- **Persistencia de Navegación y Tema (Web App)**: Guarda en `localStorage` el tema visual activo (oscuro/claro) y la última vista/pestaña activa en la que trabajó el usuario, restaurándolos al iniciar sesión.
-
-### 6. Logging Estructurado (SLF4J + Logback)
-- **Trazabilidad Profesional**: logs detallados con rotación de archivos diaria y límite de tamaño, escritos en `${user.home}/.rcpgestion/logs/app.log` y por consola.
+Una plataforma de cliente rico (**Rich Client Platform - RCP**) premium para la administración empresarial (Dashboard, Clientes, Empleados, Pedidos, Auditoría de logs y Reportes). Diseñada siguiendo patrones arquitectónicos empresariales, concurrencia avanzada, modularidad dinámica y seguridad nativa a nivel del sistema operativo.
 
 ---
 
-## 📋 Requisitos Previos
+## 🎯 Arquitectura y Patrones de Diseño
 
-- **Java 21+** instalado
-- **Maven 3.8+** instalado
-- **Git**
+El sistema está dividido en dos partes integradas:
+1. **Cliente Natico RCP (JavaFX 21 + SQLite)**: Una aplicación robusta de escritorio orientada a alto rendimiento.
+2. **Prototipo Web SPA (HTML5 + CSS3 + JS)**: Un gemelo digital modular diseñado con persistencia local y soporte híbrido de nube.
+
+### 🧬 Principales Patrones Implementados
+
+#### A. Modularidad Dinámica (Dynamic Plugin Framework)
+Mediante la interfaz `RCPModule`, la aplicación de escritorio escanea en tiempo de ejecución las clases que implementan dicha interfaz a través de `ServiceLoader` (patrón *Service Provider Interface - SPI*).
+- Permite añadir o remover módulos (plugins) de negocio compilados de forma independiente sin modificar el núcleo de la aplicación.
+- Los botones de navegación lateral, sus iconos asociados (`Ikonli` / `FontIcon`) y los eventos de carga de vista se registran de forma dinámica.
+
+#### B. Concurrencia y UI No Bloqueante (`DbTask`)
+Para asegurar una experiencia de usuario fluida, las consultas complejas y la generación de reportes se ejecutan asíncronamente heredando de `javafx.concurrent.Task`.
+- `DbTask` encapsula la ejecución en hilos daemon controlados.
+- Previene que el hilo principal de renderizado (JavaFX Application Thread) se congele ante retrasos del disco o de red.
+
+#### C. Seguridad de Credenciales (DPAPI Nativo de Windows)
+Utiliza la interfaz JNA (Java Native Access) para invocar de forma directa la biblioteca `Crypt32.dll` del sistema operativo Windows:
+- **Cifrado en primer inicio**: Al ingresar contraseñas SMTP por primera vez en `config.properties`, el sistema detecta que están en texto plano, las encripta usando la API **DPAPI** (`CryptProtectData`) a nivel de usuario del sistema operativo y reescribe el archivo con el prefijo `{DPAPI}`.
+- **Acceso seguro**: En ejecuciones posteriores se desencripta en memoria activa únicamente para el envío asíncrono, protegiendo las credenciales contra accesos no autorizados al disco duro.
+
+#### D. Sincronización Fuera de Línea (Offline-First Core)
+- **Cola Transaccional**: Ambos clientes (Java y Web) poseen una cola persistente independiente (`sync_queue` en SQLite para Java; y `sync_queue` en `localStorage` para JS).
+- **Productor-Consumidor**: Cada operación de escritura se almacena localmente y a su vez encola un log de sincronización.
+- **Sincronizador en Segundo Plano**: Un servicio independiente monitorea el estado de la red. Al restablecerse la conexión, procesa la cola de manera secuencial (FIFO) garantizando consistencia semántica.
 
 ---
 
-## 🚀 Instalación y Ejecución
+## 📁 Estructura Detallada del Proyecto
 
-### 1. Clonar el proyecto e instalar dependencias
-```bash
-git clone https://github.com/alberto2005-coder/rcp-gestion-empresarial.git
-cd rcp-gestion-empresarial
-mvn clean install
+A continuación se detalla la estructura física y lógica de los archivos de código fuente:
+
+```
+rcp-java/
+├── .gitignore                   # Exclusión de credenciales (config.properties, .env, target/)
+├── pom.xml                      # Descriptor de dependencias Maven (HikariCP, JNA, AtlantaFX, etc.)
+├── package.bat                  # Script de automatización de compilación nativa en Windows
+├── README.md                    # Documentación principal de la arquitectura
+│
+├── src/
+│   └── main/
+│       ├── java/
+│       │   ├── module-info.java # Definiciones de módulos de Java (JPMS), exportaciones y dependencias
+│       │   └── com/empresa/rcp/
+│       │       ├── App.java                 # Clase principal. Arranca y guarda estado de ventana
+│       │       ├── Main.java                # Launcher compatible con empaquetadores
+│       │       ├── MainController.java      # Controlador principal, maneja menú, inactividad y plugins
+│       │       │
+│       │       ├── chart/                   # Generación y dibujo de gráficas con Canvas de JavaFX
+│       │       │   ├── BarChartCanvas.java
+│       │       │   ├── LineChartCanvas.java
+│       │       │   └── PieChartCanvas.java
+│       │       │
+│       │       ├── db/                      # Capa de Acceso a Datos
+│       │       │   └── DatabaseManager.java # HikariCP pool, inicialización de SQLite y logs de auditoría
+│       │       │
+│       │       ├── sync/                    # Motor de sincronización
+│       │       │   ├── SyncManager.java     # Ciclo periódico asíncrono de reintentos
+│       │       │   └── SyncProvider.java    # Interfaz para conexión con APIs en la nube
+│       │       │
+│       │       ├── util/                    # Utilidades transversales
+│       │       │   ├── DbTask.java          # Wrapper para hilos esclavos de base de datos
+│       │       │   ├── PreferencesManager.java # Serializador ligero del espacio de trabajo
+│       │       │   └── SecurityUtil.java    # Enlace nativo DPAPI mediante JNA
+│       │       │
+│       │       └── module/                  # Módulos de lógica empresarial de la App
+│       │           ├── RCPModule.java       # Interfaz core para plugins
+│       │           ├── auth/
+│       │           │   ├── AuthController.java
+│       │           │   └── EmailService.java# Gestión SMTP y auto-encriptación
+│       │           ├── clientes/
+│       │           │   └── ClientesController.java
+│       │           ├── empleados/
+│       │           │   └── EmpleadosController.java
+│       │           ├── pedidos/
+│       │           │   └── PedidosController.java
+│       │           ├── configuracion/
+│       │           │   └── ConfiguracionController.java
+│       │           └── reportes/
+│       │               └── ReportesController.java
+│       │
+│       └── resources/
+│           ├── logback.xml              # Configuración rotativa y tamaños límite de logs
+│           ├── css/                     # Hojas de estilo CSS personalizadas
+│           │   ├── styles.css
+│           │   ├── dark-theme.css
+│           │   └── light-theme.css
+│           ├── fxml/                    # Vistas estructuradas FXML para JavaFX
+│           │   ├── main.fxml
+│           │   ├── login.fxml
+│           │   ├── registro.fxml
+│           │   ├── recuperar_pass.fxml
+│           │   └── ... (vistas secundarias)
+│           └── images/
+│               ├── logo.ico             # Icono de app moderna
+│               └── logo.png             # Logo squircle de bordes redondeados
+│
+└── web-app/                             # Prototipo SPA Web del cliente
+    ├── index.html                       # Estructura visual de la SPA
+    ├── styles.css                       # Estilización premium (Glassmorphism, variables CSS)
+    ├── app.js                           # Control lógico, EmailJS, syncQueue y tema persistente
+    ├── logo.png                         # Logotipo squircle adaptado
+    └── .env.example                     # Variables de entorno de EmailJS y API Cloud
 ```
 
-### 2. Ejecutar en modo desarrollo
+---
+
+## 🚀 Guía de Instalación y Ejecución
+
+### Requisitos Técnicos
+- **Java Development Kit (JDK) 21** o superior.
+- **Apache Maven 3.8** o superior.
+- Sistema Operativo Windows (necesario para el cifrado DPAPI nativo; en otros sistemas operativos el módulo omite el cifrado de forma segura).
+
+### 1. Construcción de la Aplicación de Escritorio
+En tu terminal de desarrollo ejecuta:
 ```bash
+# Compilar clases y descargar dependencias
+mvn clean compile
+
+# Iniciar la aplicación JavaFX en modo de desarrollo
 mvn javafx:run
 ```
 
-### 3. Compilar ejecutable fat JAR y .exe (Windows)
+Para generar el empaquetado final (`.jar` unificado y ejecutable `.exe` nativo):
 ```bash
+# Empaquetar todo el proyecto
 mvn clean package -DskipTests
 ```
-El instalador wrapped de Windows se generará en `target/RCPGestion.exe` utilizando Launch4j.
+- El ejecutable independiente con soporte de icono nativo y metadatos del sistema se creará en [target/RCPGestion.exe](file:///c:/Users/alors/Downloads/rcp-java/target/RCPGestion.exe).
 
 ---
 
-## 🔧 Configuración del Entorno
+## ⚙️ Configuración de Credenciales y Entorno
 
-### Configuración SMTP (Recuperación de Contraseñas por Correo)
-Crea un archivo llamado `config.properties` en la carpeta raíz del proyecto:
+### A. Correo Electrónico y SMTP (Aplicación Java)
+Para habilitar el envío real de códigos de verificación OTP durante la recuperación de contraseñas, crea el archivo `config.properties` en la raíz del proyecto:
 ```properties
 smtp.host=smtp.gmail.com
 smtp.port=587
-smtp.user=tu_correo@gmail.com
-smtp.password=tu_contraseña_plana (se cifrará automáticamente como {DPAPI}xxxx en el primer inicio)
+smtp.user=tu_correo_corporativo@gmail.com
+# Al arrancar, el texto plano se reemplazará automáticamente por una versión cifrada {DPAPI}xxxx
+smtp.password=tu_contrase単a_de_aplicacion_google
 ```
-*Nota:* Si el archivo no existe, el sistema operará en **Modo Local de Pruebas**, imprimiendo el código aleatorio de 6 dígitos en la terminal.
+> [!TIP]
+> **Modo Simulador de Consola**: Si no creas este archivo, la aplicación imprime directamente los códigos OTP por consola para facilitar el desarrollo local ágil.
 
-### Configuración del Prototipo Web (`web-app`)
-Crea un archivo `.env` dentro de `web-app/` basándote en [web-app/.env.example](file:///c:/Users/alors/Downloads/rcp-java/web-app/.env.example):
+### B. Aplicación Web (EmailJS y API REST)
+Para configurar el prototipo web, renombra el archivo [web-app/.env.example](file:///c:/Users/alors/Downloads/rcp-java/web-app/.env.example) a `web-app/.env` y configúralo:
 ```env
+# Conexión SMTP dinámica vía cliente EmailJS
 EMAILJS_PUBLIC_KEY=user_abcdefg1234567890
 EMAILJS_SERVICE_ID=service_gmail
 EMAILJS_TEMPLATE_ID=template_rcp_recovery
 
+# API REST Remota para almacenamiento centralizado en la nube (Opcional)
 DATABASE_API_URL=https://api.tuempresa.com/v1
 DATABASE_API_KEY=rcp_api_token_secure_123456789
 ```
+> [!IMPORTANT]
+> **Autonomía Offline**: Si no configuras una base de datos REST externa, la SPA redirigirá automáticamente todas las transacciones a su motor persistente en el **LocalStorage del navegador**.
 
 ---
 
-## 📁 Estructura Principal del Proyecto
+## 🛠️ Stack Tecnológico Utilizado
 
-```
-rcp-java/
-├── src/main/java/com/empresa/rcp/
-│   ├── App.java                 # Punto de entrada y persistencia de posición
-│   ├── MainController.java      # Controlador principal y cargador ServiceLoader de plugins
-│   ├── db/
-│   │   └── DatabaseManager.java # SQLite y auditoría
-│   ├── module/
-│   │   ├── RCPModule.java       # Interfaz de módulo dinámico
-│   │   └── auth/
-│   │       ├── AuthController.java
-│   │       └── EmailService.java# Envío de código e integración DPAPI
-│   ├── sync/
-│   │   ├── SyncManager.java     # Manejador del ciclo de sincronización offline-first
-│   │   └── SyncProvider.java    # Interfaz para REST API remota
-│   └── util/
-│       ├── DbTask.java          # Tarea asíncrona genérica
-│       ├── PreferencesManager.java # Serializador de coordenadas y tamaño
-│       └── SecurityUtil.java    # Cifrado DPAPI nativo (JNA)
-├── src/main/resources/
-│   └── logback.xml              # Configuración de logs rotativos
-├── web-app/
-│   ├── app.js                   # SPA con cola de sincronización offline-first y tema persistente
-│   └── .env.example             # Ejemplo detallado de entorno web
-└── pom.xml                      # Descriptores de dependencias Maven
-```
-
----
-
-## 📝 Licencia
-Este proyecto está bajo la licencia **MIT**.
+- **JavaFX 21**: Framework base de UI de escritorio.
+- **AtlantaFX (Nord Dark / Nord Light)**: Hoja de estilos moderna y elegante inspirada en sistemas operativos modernos.
+- **SQLite JDBC**: Motor de base de datos relacional ligero, embebido y de alta velocidad.
+- **HikariCP**: Pool de conexiones de alto rendimiento para bases de datos SQLite.
+- **jBCrypt**: Algoritmo seguro de hashing para almacenamiento de contraseñas de usuario.
+- **JNA & JNA Platform**: Enlace nativo a librerías y APIs de Windows.
+- **SLF4J + Logback**: Logger e histórico de rotaciones del sistema.
+- **Ikonli (Material Design Icons)**: Paquete de iconografía vectorial premium.
+- **jsPDF**: Motor de exportación PDF en el cliente web.
