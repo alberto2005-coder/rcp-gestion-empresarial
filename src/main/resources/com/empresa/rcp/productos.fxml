@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<VBox spacing="20" style="-fx-padding: 28; -fx-background-color: transparent;"
+      xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.empresa.rcp.module.productos.ProductosController">
+
+    <HBox alignment="CENTER_LEFT" spacing="16">
+        <Label text="Productos" styleClass="page-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="lblTotal" text="0 productos" styleClass="badge-info"/>
+        <Button text="✚  Nuevo Producto" styleClass="btn-primary" onAction="#onNuevoProducto"/>
+    </HBox>
+
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <TextField fx:id="txtBuscar" promptText="🔍  Buscar por nombre, categoría, estado..."
+                   styleClass="search-field" prefWidth="400"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="✏  Editar"   styleClass="btn-secondary" onAction="#onEditarProducto"/>
+        <Button text="🗑  Eliminar" styleClass="btn-danger"    onAction="#onEliminarProducto"/>
+    </HBox>
+
+    <VBox styleClass="card" VBox.vgrow="ALWAYS">
+        <TableView fx:id="tablaProductos" VBox.vgrow="ALWAYS" prefHeight="520">
+            <columns>
+                <TableColumn fx:id="colId"        text="ID"          prefWidth="55"/>
+                <TableColumn fx:id="colNombre"     text="Nombre"      prefWidth="220"/>
+                <TableColumn fx:id="colCategoria"  text="Categoría"   prefWidth="140"/>
+                <TableColumn fx:id="colPrecio"     text="Precio"      prefWidth="110"/>
+                <TableColumn fx:id="colStock"      text="Stock"       prefWidth="80"/>
+                <TableColumn fx:id="colEstado"     text="Estado"      prefWidth="100"/>
+            </columns>
+        </TableView>
+    </VBox>
+</VBox>

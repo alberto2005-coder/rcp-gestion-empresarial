@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="20" style="-fx-padding: 20;"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.empresa.rcp.module.dashboard.DashboardController">
+
+    <!-- Título -->
+    <Label text="Dashboard" style="-fx-font-size: 24; -fx-font-weight: bold;"/>
+
+    <!-- KPIs -->
+    <HBox fx:id="kpiContainer" spacing="20">
+        <!-- Empleados -->
+        <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
+            <Label text="👨‍💼 Empleados Activos" styleClass="kpi-title"/>
+            <Label fx:id="lblEmpleados" text="0" styleClass="kpi-value-sm, info">
+                <VBox.margin>
+                    <Insets top="10"/>
+                </VBox.margin>
+            </Label>
+        </VBox>
+
+        <!-- Clientes -->
+        <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
+            <Label text="👥 Clientes Activos" styleClass="kpi-title"/>
+            <Label fx:id="lblClientes" text="0" styleClass="kpi-value-sm, success">
+                <VBox.margin>
+                    <Insets top="10"/>
+                </VBox.margin>
+            </Label>
+        </VBox>
+
+        <!-- Pedidos -->
+        <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
+            <Label text="📦 Pedidos Pendientes" styleClass="kpi-title"/>
+            <Label fx:id="lblPedidos" text="0" styleClass="kpi-value-sm, warning">
+                <VBox.margin>
+                    <Insets top="10"/>
+                </VBox.margin>
+            </Label>
+        </VBox>
+
+        <!-- Ventas -->
+        <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
+            <Label text="💰 Ventas Completadas" styleClass="kpi-title"/>
+            <Label fx:id="lblVentas" text="\$0.00" styleClass="kpi-value-sm, success">
+                <VBox.margin>
+                    <Insets top="10"/>
+                </VBox.margin>
+            </Label>
+        </VBox>
+    </HBox>
+
+    <!-- Gráficos -->
+    <HBox spacing="20" VBox.vgrow="ALWAYS">
+        <!-- Gráfico de Barras -->
+        <VBox style="-fx-border-color: #88888840; -fx-border-width: 1; -fx-padding: 15; -fx-border-radius: 5;"
+              HBox.hgrow="ALWAYS">
+            <Label text="Ventas Mensuales" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+            <BarChart fx:id="barChart" VBox.vgrow="ALWAYS">
+                <xAxis>
+                    <CategoryAxis label="Mes"/>
+                </xAxis>
+                <yAxis>
+                    <NumberAxis label="Ventas"/>
+                </yAxis>
+            </BarChart>
+        </VBox>
+
+        <!-- Gráfico Circular -->
+        <VBox style="-fx-border-color: #88888840; -fx-border-width: 1; -fx-padding: 15; -fx-border-radius: 5;"
+              HBox.hgrow="ALWAYS">
+            <Label text="Estado de Pedidos" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+            <PieChart fx:id="pieChart" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </HBox>
+
+    <!-- Gráfico de Líneas -->
+    <VBox style="-fx-border-color: #88888840; -fx-border-width: 1; -fx-padding: 15; -fx-border-radius: 5;"
+          VBox.vgrow="ALWAYS">
+        <Label text="Tendencia de Clientes" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+        <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS">
+            <xAxis>
+                <CategoryAxis label="Mes"/>
+            </xAxis>
+            <yAxis>
+                <NumberAxis label="Cantidad"/>
+            </yAxis>
+        </LineChart>
+    </VBox>
+</VBox>

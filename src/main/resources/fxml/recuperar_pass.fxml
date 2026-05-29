@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="20" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" fx:controller="com.empresa.rcp.module.auth.AuthController"
+      style="-fx-background-color: var(--bg-main); -fx-min-width: 450; -fx-min-height: 550;">
+    
+    <VBox spacing="20" styleClass="card" maxWidth="420" alignment="CENTER">
+        <padding>
+            <Insets top="25" right="25" bottom="25" left="25"/>
+        </padding>
+
+        <VBox alignment="CENTER" spacing="5">
+            <Label text="🔒 Recuperar Contraseña" style="-fx-font-size: 20; -fx-font-weight: 800; -fx-text-fill: var(--accent-color);"/>
+            <Label text="Ingresa tu usuario para recibir un código de verificación en tu correo" styleClass="kpi-title" textAlignment="CENTER" wrapText="true"/>
+        </VBox>
+
+        <VBox spacing="15" alignment="CENTER_LEFT" maxWidth="Infinity">
+            <VBox spacing="5">
+                <Label text="Nombre de Usuario" styleClass="card-title"/>
+                <HBox spacing="10">
+                    <TextField fx:id="txtRecUsuario" promptText="Tu nombre de usuario" HBox.hgrow="ALWAYS"/>
+                    <Button text="✉ Enviar Código" onAction="#onCargarPregunta" styleClass="btn-secondary"/>
+                </HBox>
+            </VBox>
+
+            <VBox fx:id="vboxFormularioRecuperacion" spacing="12" visible="false" managed="false">
+                <VBox spacing="5">
+                    <Label fx:id="lblPreguntaSeguridad" text="Código enviado a tu correo." style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: var(--accent-color);"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Código de Verificación (6 dígitos)" styleClass="card-title"/>
+                    <TextField fx:id="txtRecRespuesta" promptText="Escribe el código aquí"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Nueva Contraseña" styleClass="card-title"/>
+                    <PasswordField fx:id="txtRecNuevaPassword" promptText="Nueva contraseña (mín. 6 caracteres)"/>
+                </VBox>
+            </VBox>
+        </VBox>
+
+        <Label fx:id="lblRecError" styleClass="error" wrapText="true" textAlignment="CENTER"/>
+        <Label fx:id="lblRecSuccess" styleClass="success" wrapText="true" textAlignment="CENTER"/>
+
+        <VBox spacing="10" alignment="CENTER" maxWidth="Infinity">
+            <Button fx:id="btnRestablecer" text="💾 Restablecer Contraseña" onAction="#onRestablecerPassword" maxWidth="Infinity" style="-fx-font-size: 13; -fx-padding: 10 20;" visible="false" managed="false"/>
+            <Button text="◀ Volver al Login" onAction="#onIrALogin" styleClass="btn-secondary" maxWidth="Infinity"/>
+        </VBox>
+    </VBox>
+</VBox>

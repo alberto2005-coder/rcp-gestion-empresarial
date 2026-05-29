@@ -1,0 +1,285 @@
+/* Estilos globales modernos y premium */
+* {
+    font-family: "Segoe UI", "Roboto", "SF Pro Display", sans-serif;
+    -fx-font-family: "Segoe UI", "Roboto", "SF Pro Display", sans-serif;
+}
+
+/* Clases base del panel */
+.main-container {
+    background-color: var(--bg-main);
+    -fx-background-color: var(--bg-main);
+}
+
+.top-bar {
+    background-color: var(--bg-card);
+    -fx-background-color: var(--bg-card);
+    border-color: var(--border-color);
+    -fx-border-color: var(--border-color);
+    border-width: 0 0 1px 0;
+    -fx-border-width: 0 0 1 0;
+    padding: 10px 20px;
+    -fx-padding: 10 20;
+}
+
+/* Sidebar Navigation */
+.sidebar {
+    background-color: var(--bg-sidebar);
+    -fx-background-color: var(--bg-sidebar);
+    min-width: 220px;
+    -fx-min-width: 220;
+    max-width: 220px;
+    -fx-max-width: 220;
+}
+
+.sidebar-brand {
+    color: var(--text-primary);
+    -fx-text-fill: var(--text-primary);
+    font-size: 15px;
+    -fx-font-size: 15px;
+    font-weight: bold;
+    -fx-font-weight: bold;
+    padding: 20px 15px;
+    -fx-padding: 20 15;
+}
+
+.sidebar-button {
+    color: var(--text-muted);
+    -fx-text-fill: var(--text-muted);
+    font-size: 13px;
+    -fx-font-size: 13px;
+    font-weight: 500;
+    -fx-font-weight: 500;
+    padding: 12px 20px;
+    -fx-padding: 12 20;
+    background-color: transparent;
+    -fx-background-color: transparent;
+    cursor: hand;
+    -fx-cursor: hand;
+    text-align: left;
+    -fx-text-alignment: left;
+    -fx-alignment: center-left;
+    border-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    margin: 4px 10px;
+    -fx-margin: 4 10;
+}
+
+.sidebar-button:hover {
+    background-color: var(--bg-sidebar-hover);
+    -fx-background-color: var(--bg-sidebar-hover);
+    color: var(--text-primary);
+    -fx-text-fill: var(--text-primary);
+}
+
+.sidebar-button:focused {
+    background-color: var(--bg-sidebar-active);
+    -fx-background-color: var(--bg-sidebar-active);
+    color: var(--accent-color);
+    -fx-text-fill: var(--accent-color);
+    font-weight: bold;
+    -fx-font-weight: bold;
+}
+
+/* General Button Styles */
+.button {
+    padding: 8px 18px;
+    -fx-padding: 8px 18px;
+    font-size: 12px;
+    -fx-font-size: 12px;
+    font-weight: 600;
+    -fx-font-weight: 600;
+    border-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    cursor: hand;
+    -fx-cursor: hand;
+    background-color: var(--accent-color);
+    -fx-background-color: var(--accent-color);
+    color: white;
+    -fx-text-fill: white;
+}
+
+.button:hover {
+    opacity: 0.9;
+    -fx-opacity: 0.9;
+}
+
+.button:pressed {
+    transform: scale(0.96);
+    -fx-scale-x: 0.96;
+    -fx-scale-y: 0.96;
+}
+
+.btn-secondary {
+    background-color: var(--bg-card);
+    -fx-background-color: var(--bg-card);
+    color: var(--text-primary);
+    -fx-text-fill: var(--text-primary);
+    border-color: var(--border-color);
+    -fx-border-color: var(--border-color);
+    border-width: 1px;
+    -fx-border-width: 1px;
+}
+
+.btn-secondary:hover {
+    background-color: var(--bg-main);
+    -fx-background-color: var(--bg-main);
+}
+
+/* Cards & Layout Containers */
+.card {
+    border-color: var(--border-color);
+    -fx-border-color: var(--border-color);
+    border-width: 1px;
+    -fx-border-width: 1px;
+    border-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    background-color: var(--bg-card);
+    -fx-background-color: var(--bg-card);
+    padding: 20px;
+    -fx-padding: 20;
+}
+
+/* KPIs specific styling */
+.kpi-card {
+    border-color: var(--border-color);
+    -fx-border-color: var(--border-color);
+    border-width: 1px;
+    -fx-border-width: 1px;
+    border-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    background-color: var(--bg-card);
+    -fx-background-color: var(--bg-card);
+    padding: 18px;
+    -fx-padding: 18;
+}
+
+.kpi-title {
+    font-size: 11px;
+    -fx-font-size: 11px;
+    font-weight: bold;
+    -fx-font-weight: bold;
+    color: var(--text-muted);
+    -fx-text-fill: var(--text-muted);
+}
+
+.kpi-value-sm {
+    font-size: 22px;
+    -fx-font-size: 22px;
+    font-weight: bold;
+    -fx-font-weight: bold;
+    color: var(--accent-color);
+    -fx-text-fill: var(--accent-color);
+}
+
+.page-title {
+    font-size: 24px;
+    -fx-font-size: 24px;
+    font-weight: 800;
+    -fx-font-weight: 800;
+    color: var(--text-primary);
+    -fx-text-fill: var(--text-primary);
+}
+
+.card-title {
+    font-size: 14px;
+    -fx-font-size: 14px;
+    font-weight: bold;
+    -fx-font-weight: bold;
+    color: var(--text-primary);
+    -fx-text-fill: var(--text-primary);
+}
+
+/* Fields & Inputs styling */
+.text-field {
+    padding: 10px;
+    -fx-padding: 10px;
+    font-size: 12px;
+    -fx-font-size: 12px;
+    border-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    border-width: 1px;
+    -fx-border-width: 1px;
+    border-color: var(--border-color);
+    -fx-border-color: var(--border-color);
+    background-color: var(--bg-field);
+    -fx-background-color: var(--bg-field);
+    color: var(--text-primary);
+    -fx-text-fill: var(--text-primary);
+}
+
+.text-field:focused {
+    border-color: var(--accent-color);
+    -fx-border-color: var(--accent-color);
+    border-width: 1.5px;
+    -fx-border-width: 1.5px;
+}
+
+.combo-box, .date-picker {
+    padding: 6px;
+    -fx-padding: 6px;
+    font-size: 12px;
+    -fx-font-size: 12px;
+    border-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    border-width: 1px;
+    -fx-border-width: 1px;
+    border-color: var(--border-color);
+    -fx-border-color: var(--border-color);
+    background-color: var(--bg-field);
+    -fx-background-color: var(--bg-field);
+    color: var(--text-primary);
+    -fx-text-fill: var(--text-primary);
+}
+
+.combo-box:focused, .date-picker:focused {
+    border-color: var(--accent-color);
+    -fx-border-color: var(--accent-color);
+}
+
+/* ScrollBar modern representation */
+.scroll-bar .thumb {
+    background-color: var(--border-color);
+    -fx-background-color: var(--border-color);
+    border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.scroll-bar .thumb:hover {
+    background-color: var(--text-muted);
+    -fx-background-color: var(--text-muted);
+}
+
+/* Status Labels */
+.success {
+    color: #10b981;
+    -fx-text-fill: #10b981;
+    font-weight: bold;
+    -fx-font-weight: bold;
+}
+
+.warning {
+    color: #f59e0b;
+    -fx-text-fill: #f59e0b;
+    font-weight: bold;
+    -fx-font-weight: bold;
+}
+
+.error {
+    color: #ef4444;
+    -fx-text-fill: #ef4444;
+    font-weight: bold;
+    -fx-font-weight: bold;
+}
+
+.info {
+    color: #3b82f6;
+    -fx-text-fill: #3b82f6;
+    font-weight: bold;
+    -fx-font-weight: bold;
+}

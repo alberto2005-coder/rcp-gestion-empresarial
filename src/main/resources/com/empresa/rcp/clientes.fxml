@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<VBox spacing="20" style="-fx-padding: 28; -fx-background-color: transparent;"
+      xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.empresa.rcp.module.clientes.ClientesController">
+
+    <!-- HEADER -->
+    <HBox alignment="CENTER_LEFT" spacing="16">
+        <Label text="Clientes" styleClass="page-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="lblTotal" text="0 clientes" styleClass="badge-info"/>
+        <Button text="✚  Nuevo Cliente" styleClass="btn-primary" onAction="#onNuevoCliente"/>
+    </HBox>
+
+    <!-- SEARCH + ACTIONS -->
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <TextField fx:id="txtBuscar" promptText="🔍  Buscar por nombre, email, ciudad..."
+                   styleClass="search-field" prefWidth="380"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="✏  Editar" styleClass="btn-secondary" onAction="#onEditarCliente"/>
+        <Button text="🗑  Eliminar" styleClass="btn-danger" onAction="#onEliminarCliente"/>
+    </HBox>
+
+    <!-- TABLE -->
+    <VBox styleClass="card" VBox.vgrow="ALWAYS" spacing="0">
+        <TableView fx:id="tablaClientes" VBox.vgrow="ALWAYS" prefHeight="500">
+            <columns>
+                <TableColumn fx:id="colId" text="ID" prefWidth="60"/>
+                <TableColumn fx:id="colNombre" text="Empresa / Nombre" prefWidth="240"/>
+                <TableColumn fx:id="colEmail" text="Email" prefWidth="210"/>
+                <TableColumn fx:id="colTelefono" text="Teléfono" prefWidth="140"/>
+                <TableColumn fx:id="colCiudad" text="Ciudad" prefWidth="130"/>
+                <TableColumn fx:id="colEstado" text="Estado" prefWidth="100"/>
+            </columns>
+        </TableView>
+    </VBox>
+</VBox>

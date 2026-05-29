@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<ScrollPane fitToWidth="true" styleClass="scroll-transparent"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.empresa.rcp.module.configuracion.ConfiguracionController">
+
+    <VBox spacing="24" style="-fx-padding: 28;">
+
+        <Label text="Configuración" styleClass="page-title"/>
+
+        <!-- DATOS DE EMPRESA -->
+        <VBox styleClass="card" spacing="16">
+            <Label text="🏢  Datos de la Empresa" styleClass="card-title"/>
+            <GridPane hgap="20" vgap="12">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="160" maxWidth="160"/>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                </columnConstraints>
+                <Label text="Nombre empresa:" style="-fx-text-fill:#94a3b8;" GridPane.rowIndex="0"/>
+                <TextField fx:id="txtEmpresa" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <Label text="CIF / NIF:" style="-fx-text-fill:#94a3b8;" GridPane.rowIndex="1"/>
+                <TextField fx:id="txtCIF" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <Label text="Dirección:" style="-fx-text-fill:#94a3b8;" GridPane.rowIndex="2"/>
+                <TextField fx:id="txtDireccion" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <Label text="Email:" style="-fx-text-fill:#94a3b8;" GridPane.rowIndex="3"/>
+                <TextField fx:id="txtEmail" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                <Label text="Teléfono:" style="-fx-text-fill:#94a3b8;" GridPane.rowIndex="4"/>
+                <TextField fx:id="txtTelefono" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+            </GridPane>
+        </VBox>
+
+        <!-- APARIENCIA -->
+        <VBox styleClass="card" spacing="16">
+            <Label text="🎨  Apariencia" styleClass="card-title"/>
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <Label text="Tema:" style="-fx-text-fill:#94a3b8; -fx-min-width:120;"/>
+                <ComboBox fx:id="cbTema" prefWidth="220"/>
+                <Button text="Aplicar Tema" styleClass="btn-secondary" onAction="#aplicarTema"/>
+            </HBox>
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <Label text="Idioma:" style="-fx-text-fill:#94a3b8; -fx-min-width:120;"/>
+                <ComboBox fx:id="cbIdioma" prefWidth="220"/>
+            </HBox>
+        </VBox>
+
+        <!-- ACCIONES -->
+        <HBox spacing="12">
+            <Button text="💾  Guardar Configuración" styleClass="btn-primary"
+                    onAction="#guardarConfiguracion"/>
+            <Button text="↩  Restablecer" styleClass="btn-secondary"
+                    onAction="#resetearConfiguracion"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblVersion" text="" style="-fx-text-fill:#334155; -fx-font-size:11;"/>
+        </HBox>
+
+    </VBox>
+</ScrollPane>

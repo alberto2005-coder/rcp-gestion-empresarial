@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<ScrollPane fitToWidth="true" styleClass="scroll-transparent"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.empresa.rcp.module.dashboard.DashboardController">
+
+    <VBox spacing="24" style="-fx-padding: 28;">
+
+        <!-- PAGE TITLE -->
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <Label text="Dashboard" styleClass="page-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Martes, 26 Mayo 2026" styleClass="date-label"/>
+        </HBox>
+
+        <!-- ══ KPI CARDS ══ -->
+        <GridPane hgap="16" vgap="16">
+            <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+            </columnConstraints>
+
+            <VBox styleClass="kpi-card" spacing="8" GridPane.columnIndex="0">
+                <Label text="VENTAS DEL MES" styleClass="kpi-title"/>
+                <Label fx:id="lblVentas" text="0€" styleClass="kpi-value"/>
+                <Label fx:id="lblTrendVentas" text="▲ +12.4%" styleClass="trend-up"/>
+            </VBox>
+
+            <VBox styleClass="kpi-card" spacing="8" GridPane.columnIndex="1">
+                <Label text="CLIENTES ACTIVOS" styleClass="kpi-title"/>
+                <Label fx:id="lblClientes" text="0" styleClass="kpi-value"/>
+                <Label fx:id="lblTrendClientes" text="▲ +8.1%" styleClass="trend-up"/>
+            </VBox>
+
+            <VBox styleClass="kpi-card" spacing="8" GridPane.columnIndex="2">
+                <Label text="PEDIDOS PENDIENTES" styleClass="kpi-title"/>
+                <Label fx:id="lblPedidos" text="0" styleClass="kpi-value kpi-warning"/>
+                <Label text="⚠ Requieren atención" styleClass="trend-warn"/>
+            </VBox>
+
+            <VBox styleClass="kpi-card kpi-card-accent" spacing="8" GridPane.columnIndex="3">
+                <Label text="INGRESOS TOTALES" styleClass="kpi-title"/>
+                <Label fx:id="lblIngresos" text="0€" styleClass="kpi-value"/>
+                <Label text="▲ +18.7% vs año ant." styleClass="trend-up"/>
+            </VBox>
+        </GridPane>
+
+        <!-- ══ CHARTS ROW 1 ══ -->
+        <HBox spacing="16">
+            <VBox styleClass="card" HBox.hgrow="ALWAYS" spacing="10">
+                <Label text="Ventas Mensuales" styleClass="card-title"/>
+                <Pane fx:id="paneBarChart" prefHeight="260" VBox.vgrow="ALWAYS"/>
+            </VBox>
+
+            <VBox styleClass="card" prefWidth="340" spacing="10">
+                <Label text="Distribución por Categoría" styleClass="card-title"/>
+                <Pane fx:id="panePieChart" prefHeight="260" VBox.vgrow="ALWAYS"/>
+            </VBox>
+        </HBox>
+
+        <!-- ══ CHARTS ROW 2 ══ -->
+        <VBox styleClass="card" spacing="10">
+            <Label text="Ventas vs Objetivo" styleClass="card-title"/>
+            <Pane fx:id="paneLineChart" prefHeight="220"/>
+        </VBox>
+
+    </VBox>
+</ScrollPane>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="15" style="-fx-padding: 20;"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.empresa.rcp.module.pedidos.PedidosController">
+
+    <Label text="Gestión de Pedidos" style="-fx-font-size: 24; -fx-font-weight: bold;"/>
+
+    <!-- Búsqueda -->
+    <HBox spacing="10">
+        <TextField fx:id="txtBuscar" promptText="Buscar pedido..." style="-fx-padding: 8; -fx-font-size: 12;"
+                   HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <!-- Tabla -->
+    <TableView fx:id="tablePedidos" style="-fx-font-size: 12;" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
+            <TableColumn fx:id="colNumeroPedido" text="Número" prefWidth="120"/>
+            <TableColumn fx:id="colCliente" text="Cliente" prefWidth="150"/>
+            <TableColumn fx:id="colFecha" text="Fecha" prefWidth="120"/>
+            <TableColumn fx:id="colTotal" text="Total" prefWidth="100"/>
+            <TableColumn fx:id="colEstado" text="Estado" prefWidth="120"/>
+        </columns>
+    </TableView>
+
+    <!-- Formulario -->
+    <VBox spacing="10" style="-fx-border-color: #88888840; -fx-border-width: 1; -fx-padding: 15; -fx-border-radius: 5;">
+        <Label text="Detalles del Pedido" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+        
+        <HBox spacing="10">
+            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                <Label text="Número de Pedido" style="-fx-font-size: 11;"/>
+                <TextField fx:id="txtNumeroPedido" style="-fx-padding: 8; -fx-font-size: 11;"/>
+            </VBox>
+            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                <Label text="Cliente" style="-fx-font-size: 11;"/>
+                <ComboBox fx:id="cmbClientes" style="-fx-padding: 8; -fx-font-size: 11;"/>
+            </VBox>
+            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                <Label text="Fecha del Pedido" style="-fx-font-size: 11;"/>
+                <DatePicker fx:id="datePickerFecha" style="-fx-padding: 8; -fx-font-size: 11;"/>
+            </VBox>
+        </HBox>
+
+        <HBox spacing="10">
+            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                <Label text="Total" style="-fx-font-size: 11;"/>
+                <TextField fx:id="txtTotal" style="-fx-padding: 8; -fx-font-size: 11;"/>
+            </VBox>
+            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                <Label text="Estado" style="-fx-font-size: 11;"/>
+                <ComboBox fx:id="cmbEstado" style="-fx-padding: 8; -fx-font-size: 11;"/>
+            </VBox>
+            <VBox spacing="5" HBox.hgrow="ALWAYS"/>
+        </HBox>
+
+        <!-- Botones -->
+        <HBox spacing="10" style="-fx-alignment: CENTER_RIGHT;">
+            <Button fx:id="btnAgregar" text="➕ Agregar" onAction="#onNuevoPedido" style="-fx-padding: 8 15; -fx-font-size: 11;"/>
+            <Button fx:id="btnActualizar" text="✏️ Actualizar" onAction="#onEditarPedido" style="-fx-padding: 8 15; -fx-font-size: 11;"/>
+            <Button fx:id="btnEliminar" text="🗑️ Cancelar" onAction="#onCancelarPedido" style="-fx-padding: 8 15; -fx-font-size: 11;"/>
+        </HBox>
+    </VBox>
+</VBox>

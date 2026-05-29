@@ -1,0 +1,111 @@
+/* Tema Oscuro - Slate & Indigo */
+.root {
+    --bg-main: #0f172a;
+    --bg-card: #1e293b;
+    --bg-sidebar: #0f172a;
+    --bg-sidebar-hover: rgba(99, 102, 241, 0.15);
+    --bg-sidebar-active: rgba(99, 102, 241, 0.25);
+    --border-color: #334155;
+    --text-primary: #f8fafc;
+    --text-muted: #94a3b8;
+    --accent-color: #6366f1;
+    --bg-field: #0f172a;
+
+    background: #0f172a;
+    background-color: #0f172a;
+    border-color: #334155;
+
+    -fx-base: #0f172a;
+    -fx-background: #0f172a;
+    -fx-background-color: #0f172a;
+    -fx-control-inner-background: #1e293b;
+    -fx-control-inner-background-alt: #1e293b;
+    -fx-focus-color: #6366f1;
+    -fx-text-background-color: #f8fafc;
+    -fx-text-inner-color: #f8fafc;
+    -fx-text-fill: #f8fafc;
+}
+
+/* Base View Components */
+.vbox, .hbox, .border-pane {
+    background-color: var(--bg-main);
+    -fx-background-color: var(--bg-main);
+}
+
+.table-view {
+    border-color: var(--border-color);
+    -fx-border-color: var(--border-color);
+    background-color: var(--bg-card);
+    -fx-background-color: var(--bg-card);
+    -fx-control-inner-background: var(--bg-card);
+}
+
+.table-view .column-header, .table-view .column-header-background {
+    background-color: #0f172a;
+    -fx-background-color: #0f172a;
+    border-color: var(--border-color);
+    -fx-border-color: var(--border-color);
+}
+
+.table-view .column-header .label {
+    color: var(--text-primary);
+    -fx-text-fill: var(--text-primary);
+}
+
+.table-view .cell {
+    color: var(--text-primary);
+    -fx-text-fill: var(--text-primary);
+    border-color: var(--border-color);
+    -fx-border-color: var(--border-color);
+}
+
+.table-row-cell {
+    background-color: var(--bg-card);
+    -fx-background-color: var(--bg-card);
+    color: var(--text-primary);
+    -fx-text-fill: var(--text-primary);
+}
+
+.table-row-cell:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+}
+
+.table-row-cell:selected {
+    background-color: var(--accent-color);
+    -fx-background-color: var(--accent-color);
+    color: white;
+    -fx-text-fill: white;
+}
+
+.combo-box-popup .list-cell {
+    background-color: var(--bg-card);
+    -fx-background-color: var(--bg-card);
+    color: var(--text-primary);
+    -fx-text-fill: var(--text-primary);
+}
+
+.combo-box-popup .list-cell:hover {
+    background-color: var(--accent-color);
+    -fx-background-color: var(--accent-color);
+}
+
+/* Charts overrides */
+.chart-alternative-row-fill {
+    fill: #1e293b;
+    -fx-fill: #1e293b;
+}
+
+.chart-plot-background {
+    background-color: var(--bg-card);
+    -fx-background-color: var(--bg-card);
+}
+
+.chart-title, .axis-label, .chart-legend-item {
+    color: var(--text-primary);
+    -fx-text-fill: var(--text-primary);
+}
+
+.axis {
+    -fx-tick-label-fill: var(--text-muted);
+}
