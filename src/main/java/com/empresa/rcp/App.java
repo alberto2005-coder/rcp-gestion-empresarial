@@ -41,6 +41,23 @@ public class App extends Application {
         stage.setTitle("RCP Empresarial — Panel de Control");
         stage.setMinWidth(960);
         stage.setMinHeight(640);
+
+        // Restaurar preferencias de tamaño y posición de la ventana
+        double width = com.empresa.rcp.util.PreferencesManager.getDoublePreference("window.width", 960);
+        double height = com.empresa.rcp.util.PreferencesManager.getDoublePreference("window.height", 640);
+        double x = com.empresa.rcp.util.PreferencesManager.getDoublePreference("window.x", -1);
+        double y = com.empresa.rcp.util.PreferencesManager.getDoublePreference("window.y", -1);
+        boolean maximized = com.empresa.rcp.util.PreferencesManager.getBooleanPreference("window.maximized", false);
+
+        stage.setWidth(width);
+        stage.setHeight(height);
+        if (x != -1 && y != -1) {
+            stage.setX(x);
+            stage.setY(y);
+        } else {
+            stage.centerOnScreen();
+        }
+        stage.setMaximized(maximized);
         
         // Cargar el icono de la ventana
         try {
@@ -50,8 +67,18 @@ public class App extends Application {
         }
 
         stage.setScene(scene);
-        stage.centerOnScreen();
         stage.show();
+
+        // Guardar preferencias al cerrar la aplicación
+        stage.setOnCloseRequest(event -> {
+            if (!stage.isMaximized()) {
+                com.empresa.rcp.util.PreferencesManager.savePreference("window.width", String.valueOf(stage.getWidth()));
+                com.empresa.rcp.util.PreferencesManager.savePreference("window.height", String.valueOf(stage.getHeight()));
+                com.empresa.rcp.util.PreferencesManager.savePreference("window.x", String.valueOf(stage.getX()));
+                com.empresa.rcp.util.PreferencesManager.savePreference("window.y", String.valueOf(stage.getY()));
+            }
+            com.empresa.rcp.util.PreferencesManager.savePreference("window.maximized", String.valueOf(stage.isMaximized()));
+        });
 
         // Animación de entrada suave
         stage.setOpacity(0);
