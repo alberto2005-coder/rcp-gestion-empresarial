@@ -20,15 +20,35 @@ public class EmailService {
         // Cargar desde archivo local config.properties si existe
         Properties localProps = new Properties();
         File configFile = new File("config.properties");
+        boolean rewriteConfig = false;
         if (configFile.exists()) {
             try (FileInputStream fis = new FileInputStream(configFile)) {
                 localProps.load(fis);
                 smtpHost = localProps.getProperty("smtp.host", "smtp.gmail.com");
                 smtpPort = localProps.getProperty("smtp.port", "587");
                 smtpUser = localProps.getProperty("smtp.user", "");
-                smtpPassword = localProps.getProperty("smtp.password", "");
+                
+                String pass = localProps.getProperty("smtp.password", "");
+                if (pass != null && !pass.isEmpty()) {
+                    if (pass.startsWith("{DPAPI}")) {
+                        smtpPassword = com.empresa.rcp.util.SecurityUtil.decrypt(pass);
+                    } else {
+                        smtpPassword = pass;
+                        String encryptedPass = com.empresa.rcp.util.SecurityUtil.encrypt(pass);
+                        localProps.setProperty("smtp.password", encryptedPass);
+                        rewriteConfig = true;
+                    }
+                }
             } catch (IOException e) {
                 System.err.println("[EmailService] Error al leer config.properties: " + e.getMessage());
+            }
+
+            if (rewriteConfig) {
+                try (java.io.FileOutputStream fos = new java.io.FileOutputStream(configFile)) {
+                    localProps.store(fos, "Actualizado con credenciales cifradas");
+                } catch (IOException e) {
+                    System.err.println("[EmailService] Error al escribir config.properties: " + e.getMessage());
+                }
             }
         }
 
