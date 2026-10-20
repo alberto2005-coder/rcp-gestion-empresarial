@@ -191,11 +191,11 @@ DATABASE_API_KEY=rcp_api_token_secure_123456789
 
 ## 📝 Licencia
 
-Este proyecto está bajo la **Licencia Personalizada de Alberto Ortiz**.
+Este proyecto está bajo la **Licencia GPL-3.0**.
 Consulta el archivo [LICENSE](./LICENSE) para más detalles.
 
 **Resumen:**
-- ✅ Uso no comercial permitido
-- ❌ No se permite comercialización sin autorización
-- ⚠️ Los forks deben mantener atribución visible
-- 📌 Debe incluir marca de agua del original
+- ✅ Uso libre, incluso con fines comerciales
+- ✅ Puedes modificarlo y crear forks
+- ⚠️ Si distribuyes versiones modificadas, publica su código fuente bajo GPL-3.0 (copyleft)
+- © Copyright (C) 2026 Alberto Ortiz
