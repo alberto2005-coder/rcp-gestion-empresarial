@@ -199,3 +199,223 @@ Consulta el archivo [LICENSE](./LICENSE) para más detalles.
 - ✅ Puedes modificarlo y crear forks
 - ⚠️ Si distribuyes versiones modificadas, publica su código fuente bajo GPL-3.0 (copyleft)
 - © Copyright (C) 2026 Alberto Ortiz
+
+
+# 🏢 RCP Gestión Empresarial — Enterprise Architecture
+
+A premium **Rich Client Platform (RCP)** for enterprise management (Dashboard, Customers, Employees, Orders, Audit Logs, and Reports). Architected with enterprise design patterns, asynchronous non-blocking concurrency, dynamic modularity, and OS-level native security.
+
+---
+
+## 🎯 Architecture & Design Patterns
+
+The platform consists of two integrated components:
+
+1. **Native RCP Client (JavaFX 21 + SQLite)**: A high-performance, robust desktop application.
+2. **SPA Web Prototype (HTML5 + CSS3 + JS)**: A modular digital twin with local persistence and hybrid cloud readiness.
+
+### 🧬 Key Implemented Patterns
+
+#### A. Dynamic Plugin Framework
+
+Through the `RCPModule` interface, the desktop runtime discovers implementations using `ServiceLoader` (the *Service Provider Interface - SPI* pattern).
+
+* Add or remove independently compiled business modules (plugins) without altering the application core.
+* Navigation buttons, vector icons (`Ikonli` / `FontIcon`), and view-loading events register dynamically.
+
+#### B. Asynchronous, Non-Blocking UI (`DbTask`)
+
+Complex queries and report generation run asynchronously via extensions of `javafx.concurrent.Task`.
+
+* `DbTask` manages execution on monitored daemon threads.
+* Keeps the JavaFX Application Thread responsive by offloading disk and network latency.
+
+#### C. Credential Security (Native Windows DPAPI)
+
+Interacts directly with Windows `Crypt32.dll` via Java Native Access (JNA):
+
+* **First-run encryption**: Plaintext SMTP passwords detected in `config.properties` are encrypted at the OS user level using **DPAPI** (`CryptProtectData`), then written back with the `{DPAPI}` prefix.
+* **Secure access**: Credentials decrypt strictly into working memory during asynchronous dispatch, keeping cleartext off persistent storage.
+
+#### D. Offline-First Synchronization
+
+* **Transactional Queue**: Both clients maintain persistent local queues (`sync_queue` in SQLite for Java; `sync_queue` in `localStorage` for Web).
+* **Producer-Consumer Pattern**: Write operations persist locally while pushing an entry to the sync queue.
+* **Background Synchronization**: A monitor service tracks network status. When connectivity returns, it processes queued actions in FIFO order to preserve consistency.
+
+---
+
+## 📁 Repository Structure
+
+```
+rcp-java/
+├── .gitignore                   # Credential exclusions (config.properties, .env, target/)
+├── pom.xml                      # Maven descriptor (HikariCP, JNA, AtlantaFX, etc.)
+├── package.bat                  # Windows native build automation script
+├── README.md                    # Core architecture documentation
+│
+├── src/
+│   └── main/
+│       ├── java/
+│       │   ├── module-info.java # JPMS declarations, exports, and dependencies
+│       │   └── com/empresa/rcp/
+│       │       ├── App.java                 # Entry point, lifecycle & window state
+│       │       ├── Main.java                # Launcher compatible with bundlers
+│       │       ├── MainController.java      # Master controller (menu, idle timeout, plugins)
+│       │       │
+│       │       ├── chart/                   # JavaFX Canvas chart rendering
+│       │       │   ├── BarChartCanvas.java
+│       │       │   ├── LineChartCanvas.java
+│       │       │   └── PieChartCanvas.java
+│       │       │
+│       │       ├── db/                      # Data Access Layer (DAL)
+│       │       │   └── DatabaseManager.java # HikariCP pool, SQLite setup, audit logging
+│       │       │
+│       │       ├── sync/                    # Synchronization engine
+│       │       │   ├── SyncManager.java     # Asynchronous retry loop
+│       │       │   └── SyncProvider.java    # Interface for remote cloud endpoints
+│       │       │
+│       │       ├── util/                    # Common utilities
+│       │       │   ├── DbTask.java          # Wrapper for background database workers
+│       │       │   ├── PreferencesManager.java # Lightweight workspace serializer
+│       │       │   └── SecurityUtil.java    # JNA bridge to native DPAPI
+│       │       │
+│       │       └── module/                  # Business modules
+│       │           ├── RCPModule.java       # Core plugin interface
+│       │           ├── auth/
+│       │           │   ├── AuthController.java
+│       │           │   └── EmailService.java# SMTP handler & auto-encryption
+│       │           ├── clientes/
+│       │           │   └── ClientesController.java
+│       │           ├── empleados/
+│       │           │   └── EmpleadosController.java
+│       │           ├── pedidos/
+│       │           │   └── PedidosController.java
+│       │           ├── configuracion/
+│       │           │   └── ConfiguracionController.java
+│       │           └── reportes/
+│       │               └── ReportesController.java
+│       │
+│       └── resources/
+│           ├── logback.xml              # Rolling log policies and limits
+│           ├── css/                     # Application stylesheets
+│           │   ├── styles.css
+│           │   ├── dark-theme.css
+│           │   └── light-theme.css
+│           ├── fxml/                    # JavaFX FXML layout definitions
+│           │   ├── main.fxml
+│           │   ├── login.fxml
+│           │   ├── registro.fxml
+│           │   ├── recuperar_pass.fxml
+│           │   └── ... (secondary views)
+│           └── images/
+│               ├── logo.ico             # Desktop executable icon
+│               └── logo.png             # Rounded squircle brand mark
+│
+└── web-app/                             # Client SPA prototype
+    ├── index.html                       # SPA markup
+    ├── styles.css                       # Layout & design (Glassmorphism, CSS vars)
+    ├── app.js                           # Client logic, EmailJS, syncQueue, theme state
+    ├── logo.png                         # Adapted squircle icon
+    └── .env.example                     # Environment schema for EmailJS and Cloud API
+
+```
+
+---
+
+## 🚀 Installation & Running
+
+### Requirements
+
+* **Java Development Kit (JDK) 21** or later.
+* **Apache Maven 3.8** or later.
+* Windows OS (required for native DPAPI encryption; other operating systems bypass this step safely).
+
+### 1. Building the Desktop Client
+
+From the repository root:
+
+```bash
+# Compile source and download dependencies
+mvn clean compile
+
+# Run the JavaFX client in development mode
+mvn javafx:run
+
+```
+
+To assemble a unified JAR and native `.exe`:
+
+```bash
+mvn clean package -DskipTests
+
+```
+
+* The standalone executable will be generated at [target/RCPGestion.exe](https://www.google.com/search?q=./target/RCPGestion.exe).
+
+---
+
+## ⚙️ Environment & Credential Setup
+
+### A. SMTP Configuration (Java Client)
+
+To route real OTP verification codes during password recovery, create a `config.properties` file in the project root:
+
+```properties
+smtp.host=smtp.gmail.com
+smtp.port=587
+smtp.user=your_work_email@gmail.com
+# Plaintext will automatically be encrypted to a {DPAPI}xxxx token on first launch
+smtp.password=your_google_app_password
+
+```
+
+> [!TIP]
+> **Console Fallback**: If this configuration is omitted, generated OTP codes print directly to standard output for local development.
+
+### B. Web Client Setup (EmailJS & REST API)
+
+Duplicate [web-app/.env.example](https://www.google.com/search?q=./web-app/.env.example) to `web-app/.env` and update the parameters:
+
+```env
+# Dynamic SMTP delivery via EmailJS
+EMAILJS_PUBLIC_KEY=user_abcdefg1234567890
+EMAILJS_SERVICE_ID=service_gmail
+EMAILJS_TEMPLATE_ID=template_rcp_recovery
+
+# Remote REST API for centralized cloud storage (Optional)
+DATABASE_API_URL=https://api.yourcompany.com/v1
+DATABASE_API_KEY=rcp_api_token_secure_123456789
+
+```
+
+> [!IMPORTANT]
+> **Offline Storage**: Without a remote REST endpoint configured, the web application commits mutations directly to **browser `localStorage**`.
+
+---
+
+## 🛠️ Technology Stack
+
+* **JavaFX 21**: Desktop application foundation.
+* **AtlantaFX (Nord Dark / Nord Light)**: Modern desktop UI theme.
+* **SQLite JDBC**: Embedded relational database engine.
+* **HikariCP**: High-performance connection pool for SQLite.
+* **jBCrypt**: Password hashing and verification.
+* **JNA & JNA Platform**: Native Windows API bridge.
+* **SLF4J + Logback**: Structured logging and log rotation.
+* **Ikonli (Material Design Icons)**: Vector icon integration.
+* **jsPDF**: Client-side PDF generation for the web UI.
+
+---
+
+## 📝 License
+
+This project is licensed under the **GPL-3.0 License**.
+See the [LICENSE](https://www.google.com/search?q=./LICENSE) file for complete terms.
+
+**Summary:**
+
+* ✅ Free to use, including for commercial purposes
+* ✅ Modification and fork creation permitted
+* ⚠️ Modified distributions must disclose source code under GPL-3.0 (copyleft)
+* © Copyright (C) 2026 Alberto Ortiz
